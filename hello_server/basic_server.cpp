@@ -2,7 +2,6 @@
 #include <iostream>
 #include <boost/asio.hpp>
 #include <boost/algorithm/string.hpp>
-#include <boost/bind.hpp>
 
 using boost::asio::ip::udp;
 
@@ -21,9 +20,9 @@ private:
         std::cout << "startReceive" << std::endl;
         _socket.async_receive_from(
             boost::asio::buffer(_recvBuffer), _remoteEndpoint,
-            boost::bind(&HelloWorldServer::sendWelcome, this,
-                        boost::asio::placeholders::error,
-                        boost::asio::placeholders::bytes_transferred));
+            std::bind(&HelloWorldServer::sendWelcome, this,
+                      std::placeholders::_1,
+                      std::placeholders::_2));
     }
 
     void sendWelcome(const boost::system::error_code& error,
@@ -31,9 +30,9 @@ private:
         std::cout << "sendWelcome" << std::endl;
         std::string message{"Welcome. What is your name?\n"};
         _socket.async_send_to(boost::asio::buffer(message), _remoteEndpoint,
-                              boost::bind(&HelloWorldServer::getName, this,
-                                          boost::asio::placeholders::error,
-                                          boost::asio::placeholders::bytes_transferred));
+                              std::bind(&HelloWorldServer::getName, this,
+                                        std::placeholders::_1,
+                                        std::placeholders::_2));
     }
 
     void getName(const boost::system::error_code& error,
@@ -41,9 +40,9 @@ private:
         std::cout << "getName" << std::endl;
         if (!error || error == boost::asio::error::message_size) {
             _socket.async_receive_from(boost::asio::buffer(_recvBuffer), _remoteEndpoint,
-                                       boost::bind(&HelloWorldServer::sendHello, this,
-                                                   boost::asio::placeholders::error,
-                                                   boost::asio::placeholders::bytes_transferred));
+                                       std::bind(&HelloWorldServer::sendHello, this,
+                                                 std::placeholders::_1,
+                                                 std::placeholders::_2));
         }
     }
 
@@ -55,9 +54,9 @@ private:
             boost::algorithm::trim(name);
             auto message = "Hello, " + name + "\n";
             _socket.async_send_to(boost::asio::buffer(message), _remoteEndpoint,
-                                  boost::bind(&HelloWorldServer::handleSend, this,
-                                              boost::asio::placeholders::error,
-                                              boost::asio::placeholders::bytes_transferred));
+                                  std::bind(&HelloWorldServer::handleSend, this,
+                                            std::placeholders::_1,
+                                            std::placeholders::_2));
         }
     }
 
