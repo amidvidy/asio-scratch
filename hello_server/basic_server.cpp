@@ -7,6 +7,12 @@ using boost::asio::ip::udp;
 
 namespace {
 
+/**
+ * This is broken (by-design) for obvious reasons, but its more of
+ * an exercise in messing with boost::asio than a real attempt
+ * of any kind of robust UDP server.
+ */
+
 class HelloWorldServer {
 public:
     HelloWorldServer(boost::asio::io_service& io_service)
